@@ -1,0 +1,38 @@
+version: '3.3'
+services:
+    db:
+        container_name: db-container
+        image: mongo:latest
+        restart: unless-stopped
+        # volumes:
+        #  - mongodb-data:/data/db
+        ports:
+          - 27017:27017
+
+    frontend:
+        container_name: frontend-container
+        depends_on: 
+            - backend
+            - db
+        restart: unless-stopped
+        build:
+            context: .
+            dockerfile: my-app/docker/app/Dockerfile
+        # volumes: 
+        #     - .\my-app\nginx\default.conf:/etc/nginx/conf.d/default.conf
+        ports:
+            - 3000:3000
+
+    backend:
+        container_name: backend-container
+        depends_on:
+            - db
+        restart: unless-stopped
+        build:
+            context: .
+            dockerfile: backend/docker/app/Dockerfile
+        ports:
+            - 4000:4000
+    
+#volumes:
+#    mongodb-data:
